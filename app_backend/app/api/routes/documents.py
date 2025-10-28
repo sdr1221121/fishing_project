@@ -14,8 +14,8 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=DocumentOut)
-def add_document(document:DocumentCreate, db: Session = Depends(get_db)):
-    return create_document(db, document)
+async def add_document(document:DocumentCreate, db: Session = Depends(get_db)):
+    return await create_document(db, document)
 
 @router.get("/", response_model=list[DocumentOut])
 def documents_list(db: Session= Depends(get_db)):

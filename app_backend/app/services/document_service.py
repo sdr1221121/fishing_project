@@ -11,22 +11,23 @@ DEST_DIR = os.path.join(BASE_DIR, 'uploaded_documents/')
 
 os.makedirs(DEST_DIR, exist_ok=True)
 
-def create_document(db: Session, document: DocumentCreate):
+async def create_document(db: Session, document: DocumentCreate):
     db_document=Document(**document.dict())
     db.add(db_document)
     db.commit()
     db.refresh(db_document)
-    save_document(db_document.documents_type, document)
+    await save_document(db_document.documents_type, document)
     return db_document
 
-def save_document(doc_type: str, document: DocumentCreate):
+#TODO: doc type enum
+async def save_document(doc_type: str, document: DocumentCreate):
     print(f"Salvando documento do tipo {doc_type}, com fim em {document.end_day}, no caminho {document.file_path}, criado em {document.create_date}")
     try:
          # separate extension
         _, ext = os.path.splitext(document.file_path)
         ext = ext.lower() or ".pdf"  
 
-        file_name = f"{doc_type.value}_{document.end_day or 'no_end_date'}"
+        file_name = f"{doc_type}_{document.end_day or 'no_end_date'}"
 
         copyfile(document.file_path, os.path.join(DEST_DIR, file_name + ext))
         print(f"Documento salvo em {os.path.join(DEST_DIR, file_name + ext)}")
