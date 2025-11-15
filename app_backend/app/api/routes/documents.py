@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ...schemas.document import DocumentCreate, DocumentOut
 from ...services.document_service import create_document, get_documents, get_local_documents
 from ...database import SessionLocal  
+from ...services.notification_service import expire_dates
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -24,3 +25,9 @@ def documents_list(db: Session= Depends(get_db)):
 @router.get("/local", response_model=list[str])
 def local_documents_list():
     return get_local_documents()
+
+@router.get("/expired")
+def check_expired_documents(db: Session= Depends(get_db)):
+    documents = get_documents(db)
+    expire_dates(documents)
+    return {"message": "Expiration check completed."}

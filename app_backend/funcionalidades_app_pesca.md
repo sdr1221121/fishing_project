@@ -7,6 +7,7 @@
      - criar filtros para os documentos(entidade responsavel,ano que termina)
 - **US06:** Alertas automáticos de renovação de licenças.
 
+
 ### 2. Diário de Bordo / Registo de Capturas
 - **US07:** Registar cada captura com espécie, peso, coordenadas GPS e método de captura.
 - **US08:** Visualizar histórico de todas as capturas.
