@@ -55,3 +55,20 @@ def expire_dates(document: List[Document]):
     for doc in document:
         if doc.end_day < today:
             print(f"Documento {doc.document_type.value} expirado em {doc.end_day}")
+
+def delete_document(db: Session, document_id: int):
+    document = db.query(Document).filter(Document.id == document_id).first()
+    if document:
+        # Delete the physical file if it exists
+        if document.file_path and os.path.exists(document.file_path):
+            try:
+                os.remove(document.file_path)
+                print(f"Arquivo físico deletado: {document.file_path}")
+            except Exception as e:
+                print(f"Erro ao deletar arquivo físico: {e}")
+        
+        # Delete from database
+        db.delete(document)
+        db.commit()
+        return True
+    return False

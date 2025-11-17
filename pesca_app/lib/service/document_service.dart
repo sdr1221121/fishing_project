@@ -56,4 +56,14 @@ class DocumentService {
       rethrow;
     }
   }
+
+  static Future<bool> deleteDocument(int id) async {
+    try {
+      await ApiService.delete("/documents/$id");
+      return true;
+    } catch (e) {
+      print("Erro em deleteDocument(): $e");
+      rethrow;
+    }
+  }
 }
