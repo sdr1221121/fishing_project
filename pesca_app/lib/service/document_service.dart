@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import '../models/document.dart';
 import 'api_service.dart';
 import 'package:http/http.dart' as http;
+import '../utils/file_maneger.dart';
 
 class DocumentService {
   static Future<List<Document>> getDocuments() async {
@@ -55,5 +58,17 @@ class DocumentService {
       print("Erro em uploadFile(): $e");
       rethrow;
     }
+  }
+
+  static Future<Document> uploadDocumentFile(
+    File file,
+    String documentType,
+  ) async {
+    final localpath = await FileManeger.saveFileLocally(file);
+
+  //TODO: add end_day(insert by the user) field and createDate(default current date) field
+    final body = {"document_type": documentType, "file_path": localpath};
+    final data = await ApiService.post("documents/", body);
+    return Document.fromJson(data);
   }
 }
