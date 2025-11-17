@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService.initialize();
   await NotificationService.requestNotificationPermission();
+  await NotificationService.requestStoragePermission();
 
   runApp(const PescaApp());
 }

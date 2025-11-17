@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
@@ -39,6 +40,7 @@ class NotificationService {
     );
   }
 
+//TODO: crete a file to handle permissions
 
 static Future<void> requestNotificationPermission() async {
   final androidPlugin = _notifications
@@ -48,6 +50,11 @@ static Future<void> requestNotificationPermission() async {
     final granted = await androidPlugin.requestNotificationsPermission();
     print('Permissão concedida? $granted');
   }
+}
+
+static Future<bool> requestStoragePermission() async {
+  final status = await Permission.storage.request();
+  return status.isGranted;
 }
 
 
