@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session 
 from ...schemas.document import DocumentCreate, DocumentOut
-from ...services.document_service import create_document, get_documents, get_local_documents
+from ...services.document_service import create_document, get_documents, get_local_documents, delete_document
 from ...database import SessionLocal  
 from ...services.notification_service import expire_dates
 
@@ -31,3 +31,10 @@ def check_expired_documents(db: Session= Depends(get_db)):
     documents = get_documents(db)
     expire_dates(documents)
     return {"message": "Expiration check completed."}
+
+@router.delete("/{document_id}")
+def delete_document_endpoint(document_id: int, db: Session = Depends(get_db)):
+    success = delete_document(db, document_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"message": "Document deleted successfully"}
