@@ -9,9 +9,11 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install Dependencies') {
             steps {
-                bat 'pip install -r requirements.txt'
+                dir('app_backend') { 
+                    bat 'pip install -r requirements.txt'
+                }
             }
         }
 
