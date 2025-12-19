@@ -25,7 +25,9 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                bat 'docker build -t pesca-backend:latest .'
+                dir('app_backend') { 
+                 bat 'docker build -t pesca-backend:latest .'
+                }
             }
         }
     }
