@@ -17,5 +17,9 @@ def shutdown_event():
 def root():
     return {"message": "API de Pesca ativa!"}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 app.include_router(vessel_router)
 app.include_router(document_router)
