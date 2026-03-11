@@ -3,3 +3,4 @@
 __pycache__/
 *.pyc
 "@ > .gitignore
+seed_db.py

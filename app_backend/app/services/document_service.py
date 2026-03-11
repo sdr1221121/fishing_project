@@ -5,7 +5,9 @@ from shutil import copyfile
 from sqlalchemy.orm import Session
 from ..models.document import Document
 from datetime import date
-from typing import List
+from typing import List,Optional
+from sqlalchemy import extract
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEST_DIR = os.path.join(BASE_DIR, 'uploaded_documents/')
@@ -55,3 +57,37 @@ def expire_dates(document: List[Document]):
     for doc in document:
         if doc.end_day < today:
             print(f"Documento {doc.document_type.value} expirado em {doc.end_day}")
+
+def filter_documents(
+        db:Session,
+        vessel_id:Optional[int]=None,
+        document_type:Optional[str]=None,
+        entity_responsible:Optional[str]=None,
+        end_year:Optional[int]=None,
+        date1:Optional[int]=None,
+        date2:Optional[int]=None
+
+):
+    query=db.query(Document)
+
+    if vessel_id is not None:
+        query= query.filter(Document.vessel_id==vessel_id)
+
+    if document_type is not None:
+        query= query.filter(Document.document_type==document_type)
+
+    if entity_responsible is not None:
+        query= query.filter(Document.entity_responsible==entity_responsible)
+
+    if end_year is not None:
+      query= query.filter(extract("year",Document.end_year)==end_year)
+
+    if (date1 and date2) is not None:
+      query= query.filter(Document.end_day> date1 and Document.end_day<date2)
+
+    results= query.all()
+
+    if not results:
+        return ["VAZIO"]
+
+    return results

@@ -5,7 +5,8 @@ from ..core.document_type import DocumentType
 #TODO: adicionar estados de documento (ativo, expirado, etc)
 class DocumentCreate(BaseModel):
     document_type: DocumentType
-    end_day: datetime  | None
+    entity_responsible: str
+    end_day: date   | None
     file_path: str
     create_date: datetime  | None
     

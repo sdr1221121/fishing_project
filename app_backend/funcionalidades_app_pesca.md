@@ -5,8 +5,7 @@
 - **US04:** Registar dados da embarcação (matrícula, lotação, arqueação).
 - **US05:** Carregar documentos fiscais anuais e licenças da embarcação.  
      - criar filtros para os documentos(entidade responsavel,ano que termina)
-- **US06:** Alertas automáticos de renovação de licenças.
-
+- **US06:** Alertas automáticos de renovação de licenças.(add scheduler or event)
 
 ### 2. Diário de Bordo / Registo de Capturas
 - **US07:** Registar cada captura com espécie, peso, coordenadas GPS e método de captura.
@@ -45,6 +44,7 @@
 - **US01:** Criar conta com email, número de licença marítima e NIF.
 - **US02:** Autenticação com *login* e *token* JWT.
 - **US03:** Recuperar palavra-passe por email.
+
 
 ## Frontend
 > Todas as funcionalidades consumirão as APIs do backend e se focam em interface de utilizador:
