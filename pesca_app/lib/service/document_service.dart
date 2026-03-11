@@ -61,14 +61,20 @@ class DocumentService {
   }
 
   static Future<Document> uploadDocumentFile(
-    File file,
-    String documentType,
-  ) async {
-    final localpath = await FileManeger.saveFileLocally(file);
+  File file,
+  String documentType,
+  DateTime endDay,
+) async {
+  final localpath = await FileManeger.saveFileLocally(file);
 
-  //TODO: add end_day(insert by the user) field and createDate(default current date) field
-    final body = {"document_type": documentType, "file_path": localpath};
-    final data = await ApiService.post("documents/", body);
-    return Document.fromJson(data);
-  }
+  final body = {
+    "document_type": documentType,
+    "file_path": localpath,
+    "end_day": endDay.toIso8601String(),
+    "create_date": DateTime.now().toIso8601String(),
+  };
+
+  final data = await ApiService.post("/documents/", body);
+  return Document.fromJson(data);
+}
 }
