@@ -7,7 +7,7 @@ class Document(Base):
     __tablename__ = "documents"
 
     id = Column(Integer, primary_key=True, index=True)
-    vessel_id=Column(Integer,ForeignKey("vessels.id"), nullable=False)
+    vessel_id=Column(Integer,ForeignKey("vessels.id"), nullable=True)
 
     document_type = Column(String, nullable=False)
     entity_responsible = Column(String, nullable=False)

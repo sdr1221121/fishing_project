@@ -31,7 +31,7 @@ def check_expired_documents(db: Session= Depends(get_db)):
     return {"message": "Expiration check completed."}
 
 @router.get("/")
-def filter_documents(
+def get_filtered_documents(
     vessel_id: Optional[int] = Query(None),
     document_type: Optional[str] = Query(None),
     entity_responsible: Optional[str] = Query(None),

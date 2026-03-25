@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.api.routes.documents import router as document_router
 from app.api.routes.vessels import router as vessel_router
 from app.api.routes.notifications import router as notification_router
+from app.api.routes.catch import router as catch_router
 
 from app.database import Base, engine
 
@@ -26,3 +27,4 @@ def health():
 app.include_router(vessel_router)
 app.include_router(document_router)
 app.include_router(notification_router)
+app.include_router(catch_router)

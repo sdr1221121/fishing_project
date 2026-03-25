@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-
+from .specie import SpecieOut
 class CatchCreate(BaseModel):
-    specie_id:int
+    specie:str
     weight:float
     latitude:float
     longitude:float
@@ -10,6 +10,7 @@ class CatchCreate(BaseModel):
 
 class CatchOut(CatchCreate):
     id:int
+    specie:"SpecieOut"
     
     class Config:
         orm_mode = True

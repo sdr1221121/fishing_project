@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+
+body{
+font-family: Arial;
+margin:40px;
+}
+
+h1{
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid black;
+padding:8px;
+text-align:center;
+}
+
+th{
+background-color:#f2f2f2;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Relatório de Capturas</h1>
+
+<table>
+
+<tr>
+<th>Espécie</th>
+<th>Peso</th>
+<th>Latitude</th>
+<th>Longitude</th>
+<th>Método</th>
+</tr>
+
+{% for catch in catches %}
+
+<tr>
+<td>{{catch.specie_id}}</td>
+<td>{{catch.weight}}</td>
+<td>{{catch.latitude}}</td>
+<td>{{catch.longitude}}</td>
+<td>{{catch.captured_method}}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>

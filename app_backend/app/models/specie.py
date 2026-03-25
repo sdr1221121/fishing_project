@@ -9,4 +9,4 @@ class Specie(Base):
     name=Column(String,nullable=False)
     classification=Column(String,nullable=True)
 
-    catches=relationship("Catch", back_populates="species")
+    catches=relationship("Catch", back_populates="specie")
