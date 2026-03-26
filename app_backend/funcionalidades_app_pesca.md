@@ -13,7 +13,7 @@
 - **US09:** Gerar relatório em PDF das capturas.
 
 ### 3. Dados Ambientais em Tempo Real
-- **US10:** Consultar marés, direção do vento e temperatura da água em tempo real.
+- **US10:** Consultar marés, direção do vento e temperatura da água em tempo real.(using stormglass.io and openwheathermap)
 - **US11:** Alertas de condições meteorológicas adversas.
 
 ### 4. Área Fiscal e Relatórios
