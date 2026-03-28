@@ -1,10 +1,11 @@
 import requests
 import datetime
+import os
 
-key_stormglass = ""
+STORMGLASS_API_KEY = os.getenv("STORMGLASS_API_KEY")
 
 
-def fetch_tide():
+def fetch_tide(lat: float, lon:float):
     now = datetime.datetime.utcnow()
 
     start = int(now.replace(hour=0, minute=0, second=0).timestamp())
@@ -13,13 +14,13 @@ def fetch_tide():
     response = requests.get(
         'https://api.stormglass.io/v2/tide/extremes/point',
         params={
-            'lat': 41.1579,   # Porto
-            'lng': -8.6291,
+            'lat': lat,   
+            'lng': lon,
             'start': start,
             'end': end,
         },
         headers={
-            'Authorization': key_stormglass
+            'Authorization': STORMGLASS_API_KEY
         }
     )
 

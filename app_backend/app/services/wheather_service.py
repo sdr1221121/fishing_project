@@ -1,7 +1,7 @@
 import os
 import requests
 
-key_openwheathermap=""
+OPENWHEATHERMAP_API_KEY=os.getenv("OPENWHEATHERMAP_API_KEY")
 
 def fetch_wheather(lat: float, lon:float):
     url = "https://api.openweathermap.org/data/2.5/weather"
@@ -9,7 +9,7 @@ def fetch_wheather(lat: float, lon:float):
     params = {
         "lat": lat,
         "lon": lon,
-        "appid": key_openwheathermap,
+        "appid": OPENWHEATHERMAP_API_KEY,
         "units": "metric"
     }
 
