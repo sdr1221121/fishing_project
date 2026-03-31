@@ -52,3 +52,31 @@ def get_valid_documents(db:Session):
     today=date.today
     valid_documents=query.filter(Document.end_day>today).all
     return valid_documents or ["VAZIO"]
+
+def generate_alerts(weather: dict, tides: list):
+    alerts = []
+
+    wind = weather["wind_speed"]
+    temp = weather["temperature"]
+
+    # 🌬️ vento perigoso
+    if wind > 12:
+        alerts.append("Condições perigosas: vento muito forte")
+
+    # 🌊 maré forte (mudança brusca)
+    tide_list = tides.get("data", [])
+    if len(tide_list) >= 2:
+        
+        diff = abs(tide_list[0]["height"] - tide_list[1]["height"])
+        if diff > 2:
+            alerts.append("Maré com grande variação — correntes fortes")
+
+    # ❄️ água fria
+    if temp < 8:
+        alerts.append("Temperatura baixa pode afetar a pesca")
+
+    # 🎣 condição ideal (extra útil)
+    if wind < 5 and temp > 12:
+        alerts.append("Boas condições para pesca")
+
+    return alerts
