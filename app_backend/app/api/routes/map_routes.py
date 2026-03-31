@@ -1,11 +1,14 @@
-from fastapi import UploadFile, File, APIRouter, Depends
+from fastapi import UploadFile, File, APIRouter, Depends, Query
+from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi.responses import Response
 from ...database import SessionLocal  
 from ...models.fishing_spot import FishingSpot
-from ...services.gpx_service import generate_gpx, import_gpx,generate_gpx2
+from ...services.gpx_service import generate_gpx, import_gpx
+from ...services.fishing_spot_service import create_fishing_spot, fetch_fishing_spots
 from ...schemas.fishing_route import FishingRouteCreate, FishingRouteOut
 from ...schemas.fishing_route_point import FishingRoutePointCreate
+from ...schemas.fishing_spot import FishingSpotCreate, FishingSpotOut
 from ...services.fishing_route_service import (
     create_route,
     get_route_by_id,
@@ -25,18 +28,39 @@ def get_db():
         db.close()
 
 # -------------------------
-# ROUTES
+# SPOTS
 # -------------------------
 @router.get("/spots")
-def get_spots(db: Session = Depends(get_db)):
-    return db.query(FishingSpot).order_by(FishingSpot.popularity.desc()).all()
+def get_fishing_spots(
+    db: Session=Depends(get_db),
+    name: Optional[str] = Query(None),
+    min_popularity: Optional[int] = Query(None),
+    max_popularity: Optional[int] = Query(None),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None),
+    radius: Optional[float] = Query(None)
+    ):
+    results = fetch_fishing_spots(
+        db,
+        name=name,
+        min_popularity=min_popularity,
+        max_popularity=max_popularity,
+        lat=lat,
+        lon=lon,
+        radius=radius
+    )
+    return results
+
+@router.post("/spots",response_model=FishingSpotOut)
+def create_fishing_spots(data:FishingSpotCreate,db:Session=Depends(get_db)):
+    return create_fishing_spot(db,data.name,data.latitude,data.longitude,data.description)
 
 # -------------------------
 # ROUTES
 # -------------------------
 @router.post("/routes", response_model=FishingRouteOut)
 def create_route_endpoint(data: FishingRouteCreate, db: Session = Depends(get_db)):
-    return create_route(db, data.vessel_id)
+    return create_route(db, data.vessel_id , data.name)
 
 
 @router.get("/routes", response_model=list[FishingRouteOut])

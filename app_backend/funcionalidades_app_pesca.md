@@ -20,12 +20,12 @@
 - **US16:** Emitir relatórios fiscais de atividade da embarcação.
 - **US17:** Exportar documentos em PDF.
 
-### 5. Integração com Equipamentos Náuticos------------
-- **US14:** Conectar a *fish-finder* via Bluetooth ou Wi-Fi.
+### 5. Integração com Equipamentos Náuticos-Fica como ideia--
+- **US14:** Conectar a *fish-finder* via Bluetooth ou Wi-Fi.(Integração da api no front end)
 - **US15:** Importar dados sonar.
 
 ### 6. Mapas e Rotas de Pesca-----------------
-- **US12:** Visualizar no mapa os "spots" de pesca mais populares.
+- **US12:** Visualizar no mapa os "spots" de pesca mais populares.xxxxxxxxxx
 - **US13:** Gravar rotas e exportar ficheiros GPX.xxxxxxxxx
 
 ### 7. Funcionalidades Offline-----------
@@ -34,11 +34,12 @@
 
 ### 8. Perfil e Estatísticas-------
 - **US20:** Visualizar estatísticas de desempenho (capturas por espécie, local, mês).FRONT_E
-- **US21:** Competir em rankings com outros pescadores.
+- **US21:** Competir em rankings com outros pescadores.NEED_USERS
 
 ### 9. Notificações e Alertas Inteligentes------------
 - **US22:** Receber alertas de renovação de documentos legais.
 - **US23:** Receber recomendações de pesca com base nas marés e fases da lua.
+- **NEW(optional)** Activate/Desactivate Recomendaçoes/Alertas 
 
 ### 10. Registo e Autenticação (última fase)---------
 - **US01:** Criar conta com email, número de licença marítima e NIF.

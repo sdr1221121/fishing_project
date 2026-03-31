@@ -5,8 +5,8 @@ from ..models.fishing_routes import FishingRoute
 from ..models.fishing_route_point import FishingRoutePoint
 
 
-def create_route(db: Session, vessel_id: int):
-    fishing_route = FishingRoute(vessel_id=vessel_id)
+def create_route(db: Session, vessel_id:int , name:str):
+    fishing_route = FishingRoute(name=name,vessel_id=vessel_id)
 
     db.add(fishing_route)
     db.commit()

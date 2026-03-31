@@ -14,7 +14,7 @@ class FishingRoutePointOut(BaseModel):
     fishing_route_id: int
     latitude: float
     longitude: float
-    timestamp: datetime
+    timestamp: datetime | None
 
     class Config:
         from_attributes = True
