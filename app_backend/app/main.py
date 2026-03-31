@@ -4,6 +4,7 @@ from app.api.routes.vessels import router as vessel_router
 from app.api.routes.notifications import router as notification_router
 from app.api.routes.catch import router as catch_router
 from app.api.routes.Condition_wheather_tide import router as conditions_router
+from app.api.routes.map_routes import router as map_router
 
 from app.database import Base, engine
 
@@ -30,3 +31,4 @@ app.include_router(document_router)
 app.include_router(notification_router)
 app.include_router(catch_router)
 app.include_router(conditions_router)
+app.include_router(map_router)
