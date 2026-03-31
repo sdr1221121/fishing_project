@@ -1,8 +1,6 @@
 from ...services.wheather_service import fetch_wheather
 from ...services.tide_service import fetch_tide 
 from fastapi import APIRouter
-import os
-
 
 router = APIRouter(prefix="/condition", tags=["Conditions"])
 

@@ -5,7 +5,6 @@ from ...services.notification_service import get_expired_documents, get_valid_do
 from ...database import SessionLocal  
 from ...services.notification_service import expire_dates
 
-
 router = APIRouter(prefix="/notification", tags=["Documents"])
 
 def get_db():

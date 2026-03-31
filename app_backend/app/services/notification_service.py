@@ -1,4 +1,4 @@
-import requests
+import requests, os
 import json
 from datetime import date
 from typing import List
@@ -9,8 +9,8 @@ from sqlalchemy import extract
 
 
 #TODO: use firebase keys
-FIREBASE_SERVER_KEY = ""
-FIREBASE_URL = ""
+FIREBASE_SERVER_KEY =os.getenv("FIREBASE_SERVER_KEY")
+FIREBASE_URL = os.getenv("FIREBASE_URL")
 
 def expire_dates(document: List[Document]):
     today = date.today()
