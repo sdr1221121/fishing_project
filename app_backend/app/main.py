@@ -5,6 +5,7 @@ from app.api.routes.notifications import router as notification_router
 from app.api.routes.catch import router as catch_router
 from app.api.routes.Condition_wheather_tide import router as conditions_router
 from app.api.routes.map_routes import router as map_router
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 
@@ -32,3 +33,11 @@ app.include_router(notification_router)
 app.include_router(catch_router)
 app.include_router(conditions_router)
 app.include_router(map_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

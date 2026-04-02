@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends,Query
-from sqlalchemy.orm import Session 
-from ...schemas.document import DocumentCreate, DocumentOut
-from ...services.notification_service import get_expired_documents, get_valid_documents
-from ...database import SessionLocal  
-from ...services.notification_service import expire_dates
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/notification", tags=["Documents"])
+from ...database import SessionLocal
+from ...services.notification_service import (
+    check_expiring_documents,
+    generate_fishing_recommendations,
+)
+
+router = APIRouter(prefix="/notification", tags=["Notifications"])
+
 
 def get_db():
     db = SessionLocal()
@@ -14,10 +17,19 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/expired")
-def get_expired_documents(db:Session=Depends(get_db)):
-    return get_expired_documents(db)
 
-@router.get("/valid")
-def get_valid_documents(db: Session= Depends(get_db)):
-    return get_valid_documents(db)
+
+@router.get("/documents/alerts")
+def get_document_alerts(db: Session = Depends(get_db)):
+    return check_expiring_documents(db)
+
+
+
+@router.post("/recommendations")
+def get_recommendations(
+    weather: dict,
+    tides: dict,
+    moon_phase: float
+):
+    return generate_fishing_recommendations(weather, tides, moon_phase)
+

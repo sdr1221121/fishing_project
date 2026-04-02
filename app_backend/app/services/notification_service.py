@@ -1,39 +1,27 @@
-import requests, os
+import requests
+import os
 import json
 from datetime import date
 from typing import List
-from ..models.document import Document
-from datetime import date
 from sqlalchemy.orm import Session
-from sqlalchemy import extract
 
+from ..models.document import Document
 
-#TODO: use firebase keys
-FIREBASE_SERVER_KEY =os.getenv("FIREBASE_SERVER_KEY")
+FIREBASE_SERVER_KEY = os.getenv("FIREBASE_SERVER_KEY")
 FIREBASE_URL = os.getenv("FIREBASE_URL")
 
-def expire_dates(document: List[Document]):
-    today = date.today()
-    for doc in document:
-        if doc.end_day < today:
-            print(f"Documento {doc.document_type.value} expirado em {doc.end_day}")
-            send_notification(
-                token_dispositivo=doc.device_token,
-                titulo="Documento Expirado",
-                mensagem=f"O documento {doc.document_type.value} expirou em {doc.end_day}."
-            )
 
-def send_notification(token_dispositivo: str, titulo: str, mensagem: str):
+def send_notification(token: str, title: str, message: str):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"key={FIREBASE_SERVER_KEY}"
     }
 
     body = {
-        "to": token_dispositivo,  
+        "to": token,
         "notification": {
-            "title": titulo,
-            "body": mensagem
+            "title": title,
+            "body": message
         },
         "priority": "high"
     }
@@ -41,42 +29,67 @@ def send_notification(token_dispositivo: str, titulo: str, mensagem: str):
     response = requests.post(FIREBASE_URL, headers=headers, data=json.dumps(body))
     return response.json()
 
-def get_expired_documents(db:Session):
-    query=db.query(Document)
-    today=date.today
-    expired_documents=query.filter(Document.end_day.isnot(None), Document.end_day < today).all
-    return expired_documents or ["VAZIO"]
 
-def get_valid_documents(db:Session):
-    query=db.query(Document)
-    today=date.today
-    valid_documents=query.filter(Document.end_day>today).all
-    return valid_documents or ["VAZIO"]
+def check_expiring_documents(db: Session):
+    today = date.today()
 
-def generate_alerts(weather: dict, tides: list):
+    documents = db.query(Document)\
+        .filter(Document.end_day.isnot(None))\
+        .all()
+
     alerts = []
 
-    wind = weather["wind_speed"]
-    temp = weather["temperature"]
+    for doc in documents:
+        if doc.end_day < today:
+            alerts.append({
+                "document_id": doc.id,
+                "message": f"Documento expirado: {doc.document_type.value}"
+            })
 
-    # 🌬️ vento perigoso
-    if wind > 12:
-        alerts.append("Condições perigosas: vento muito forte")
+            if doc.device_token:
+                send_notification(
+                    token=doc.device_token,
+                    title="Documento Expirado",
+                    message=f"O documento {doc.document_type.value} expirou."
+                )
 
-    # 🌊 maré forte (mudança brusca)
-    tide_list = tides.get("data", [])
-    if len(tide_list) >= 2:
-        
-        diff = abs(tide_list[0]["height"] - tide_list[1]["height"])
-        if diff > 2:
-            alerts.append("Maré com grande variação — correntes fortes")
-
-    # ❄️ água fria
-    if temp < 8:
-        alerts.append("Temperatura baixa pode afetar a pesca")
-
-    # 🎣 condição ideal (extra útil)
-    if wind < 5 and temp > 12:
-        alerts.append("Boas condições para pesca")
+        elif (doc.end_day - today).days <= 30:
+            alerts.append({
+                "document_id": doc.id,
+                "message": f"Documento a expirar: {doc.document_type}"
+            })
 
     return alerts
+
+
+def generate_fishing_recommendations(weather: dict, tides: dict):
+    recommendations = []
+
+    wind = weather.get("wind_speed", 0)
+    temp = weather.get("temperature", 0)
+
+    if wind > 12:
+        recommendations.append("Vento forte — condições desfavoráveis")
+
+    elif wind < 5:
+        recommendations.append("Vento fraco — boas condições")
+
+    if temp > 12:
+        recommendations.append("Temperatura favorável à atividade piscatória")
+
+    elif temp < 8:
+        recommendations.append("Temperatura baixa — atividade reduzida")
+
+    tide_data = tides.get("data", [])
+
+    if len(tide_data) >= 2:
+        diff = abs(tide_data[0]["height"] - tide_data[1]["height"])
+
+        if diff > 2:
+            recommendations.append("Correntes fortes devido a grande variação de maré")
+
+        else:
+            recommendations.append("Maré estável — condições normais")
+
+    return recommendations
+

@@ -4,7 +4,7 @@ class VesselCreate(BaseModel):
     name: str
     registration_number: str
     capacity: int | None
-    tonnage: int | None
+    tonnage: float | None
 
 
 class VesselOut(VesselCreate):
