@@ -1,17 +1,23 @@
 from datetime import datetime, date
 from pydantic import BaseModel
-from ..core.document_type import DocumentType
+from typing import Optional
 
-#TODO: adicionar estados de documento (ativo, expirado, etc)
-class DocumentCreate(BaseModel):
-    document_type: DocumentType
+
+class DocumentBase(BaseModel):
+    document_type: str
     entity_responsible: str
-    end_day: date   | None
-    file_path: str
-    create_date: datetime  | None
-    
-class DocumentOut(DocumentCreate):
+    end_day: Optional[date] = None
+
+
+class DocumentCreate(DocumentBase):
+    pass
+
+
+class DocumentOut(DocumentBase):
     id: int
+    file_name: str
+    create_date: Optional[datetime] = None
+    
 
     class Config:
-        orm_mode = True
+        orm_mode = True 

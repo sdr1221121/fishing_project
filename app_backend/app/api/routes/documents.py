@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends,Query
-from sqlalchemy.orm import Session 
-from ...schemas.document import DocumentCreate, DocumentOut
-from ...services.document_service import create_document, get_documents, get_local_documents, filter_documents
-from ...database import SessionLocal  
-from ...services.notification_service import expire_dates
+from fastapi import APIRouter, Depends, Query, UploadFile, File, Form, HTTPException
+from fastapi.responses import Response
+from sqlalchemy.orm import Session
 from typing import Optional
+from datetime import datetime, date
+from ...schemas.document import DocumentOut
+from ...database import SessionLocal
+from ...models.document import Document
+from ...services.document_service import filter_documents, get_local_documents
 
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
+
 
 def get_db():
     db = SessionLocal()
@@ -16,38 +19,69 @@ def get_db():
     finally:
         db.close()
 
+
 @router.post("/", response_model=DocumentOut)
-async def add_document(document:DocumentCreate, db: Session = Depends(get_db)):
-    return await create_document(db, document)
+async def add_document(
+    file: UploadFile = File(...),
+    document_type: str = Form(...),
+    entity_responsible: str = Form(...),
+    end_day: Optional[str] = Form(None),
+    db: Session = Depends(get_db)
+):
+    file_bytes = await file.read()
 
-@router.get("/local", response_model=list[str])
-def local_documents_list():
-    return get_local_documents()
+    db_document = Document(
+        document_type=document_type,
+        entity_responsible=entity_responsible,
+        end_day=date.fromisoformat(end_day) if end_day else None,
+        file_name=file.filename,
+        file_data=file_bytes,
+        create_date=datetime.utcnow()
+    )
 
-@router.get("/expired")
-def check_expired_documents(db: Session= Depends(get_db)):
-    documents = get_documents(db)
-    expire_dates(documents)
-    return {"message": "Expiration check completed."}
+    db.add(db_document)
+    db.commit()
+    db.refresh(db_document)
 
-@router.get("/")
+    return db_document
+
+
+@router.get("/", response_model=list[DocumentOut])
 def get_filtered_documents(
     vessel_id: Optional[int] = Query(None),
     document_type: Optional[str] = Query(None),
     entity_responsible: Optional[str] = Query(None),
-    end_year: Optional[int] = Query(None),
-    date1: Optional[int] = Query(None),
-    date2: Optional[int] = Query(None),
-
+    end_day: Optional[int] = Query(None),
+    date1: Optional[date] = Query(None),
+    date2: Optional[date] = Query(None),
     db: Session = Depends(get_db),
 ):
-    results = filter_documents(
+    return filter_documents(
         db,
         vessel_id=vessel_id,
         document_type=document_type,
         entity_responsible=entity_responsible,
-        end_year=end_year,
+        end_day=end_day,
         date1=date1,
         date2=date2
     )
-    return results
+
+
+@router.get("/{doc_id}/download")
+def download_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = db.query(Document).filter(Document.id == doc_id).first()
+
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    return Response(
+        content=doc.file_data,
+        media_type="application/octet-stream",
+        headers={
+            "Content-Disposition": f'attachment; filename="{doc.file_name}"'
+        }
+    )
+
+@router.get("/local", response_model=list[str])
+def local_documents_list():
+    return get_local_documents()
